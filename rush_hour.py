@@ -1,5 +1,5 @@
 # to do
-# potential m bug
+# optimize
 # mine
 
 from z3 import *
@@ -349,23 +349,39 @@ for j in range(n):
 
                         # Only move at a time
 
+# for t in interval(1,l):
+#     atleast_one_move  = []
+#     for i in range(n):
+#         for j in range(n):
+#             atleast_one_move.append(m[i][j][t])
+#     m_c.append(Or(atleast_one_move))
+
+
+
+
+
+# PbEq()
+
 for t in interval(1,l):
-    atleast_one_move  = []
+    list_of_tuples = []
     for i in range(n):
         for j in range(n):
-            atleast_one_move.append(m[i][j][t])
-    m_c.append(Or(atleast_one_move))
+            list_of_tuples.append((m[i][j][t],1))  
+    m_c.append(z3.PbEq(list_of_tuples,1))
 
 
+#Exactly 3 of the variables should be true
+# print(m)
 
-#atmost 1
-for i in range(n):    
-    for j in range(n):
-        for t in interval(1,l):
-            for i1 in range(n):
-                for j1 in range(n):
-                    if (i1,j1)!=(i,j): #not both true
-                        m_c.append(Not(And(m[i][j][t],m[i1][j1][t])))
+
+# #atmost 1
+# for i in range(n):    
+#     for j in range(n):
+#         for t in interval(1,l):
+#             for i1 in range(n):
+#                 for j1 in range(n):
+#                     if (i1,j1)!=(i,j): #not both true
+#                         m_c.append(Not(And(m[i][j][t],m[i1][j1][t])))
 
 
 
@@ -442,6 +458,7 @@ print("coll_c",collisions_c)
 print(5*"\n")
 s = Solver()
 s.add(pos_c + m_c + collisions_c + winning_c)
+# s.add( z3.PbEq(list_of_tuples, 1) )
 if s.check() == sat:
     true_m = []
     true_h = []
